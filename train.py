@@ -55,7 +55,7 @@ def get_transfer_learning_model(num_classes):
     return target_model, c, opt, lr
 
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=5):
+def train_model(model, device, criterion, optimizer, scheduler, num_epochs=5):
     """
     training
 
@@ -79,7 +79,6 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=5):
     model : DogClassificationModel
         Trained model.
     """
-    print("Training Start.")
     since = time.time()
     model = model.to(device)
 
