@@ -79,6 +79,7 @@ def train_model(model, device, criterion, optimizer, scheduler, num_epochs=5):
     model : DogClassificationModel
         Trained model.
     """
+    print("Training Start.")
     since = time.time()
     model = model.to(device)
 
