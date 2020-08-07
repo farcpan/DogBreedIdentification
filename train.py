@@ -55,7 +55,11 @@ def get_transfer_learning_model(num_classes):
     return target_model, c, opt, lr
 
 
-def train_model(model, device, criterion, optimizer, scheduler, num_epochs=5):
+def train_model(
+    model, 
+    device, 
+    train_data_loader,
+    criterion, optimizer, scheduler, num_epochs=5):
     """
     training
 
@@ -65,6 +69,8 @@ def train_model(model, device, criterion, optimizer, scheduler, num_epochs=5):
         Network model to be trained.
     device : device
         cuda or cpu
+    train_data_loader : dataloader
+        dataloader
     criterion : 
         Loss function.
     optimizer :
