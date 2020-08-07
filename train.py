@@ -206,7 +206,7 @@ if __name__ == "__main__":
     print("Training start.")
     since = time.time()
     trained_model = train_model(
-        model=model_ft, device=device, 
+        model=target_model, device=device, 
         train_data_loader=train_data_loader, valid_data_loader=val_data_loader,
         criterion=criterion, 
         optimizer=opt, scheduler=exp_lr_scheduler, num_epochs=5)
