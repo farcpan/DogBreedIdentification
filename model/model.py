@@ -73,7 +73,7 @@ class SimpleModel(nn.Module):
         x = self.relu(x)
         x = self.fc2(x)
 
-        return x
+        return x, x
 
 
 class DogClassificationModel(nn.Module):
