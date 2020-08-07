@@ -49,14 +49,14 @@ def get_transfer_learning_model(num_classes):
     base_model = models.resnext101_32x8d(pretrained=True)
 
     # model for dog classification
-    model = model.DogClassificationModel(
+    target_model = model.DogClassificationModel(
         model=base_model, num_classes=num_classes, mean=0.5, std=0.25)
 
     c = nn.CrossEntropyLoss()   # loss function
-    opt = optim.SGD(model.parameters(), lr=0.001, momentum=0.9) # optimizer
+    opt = optim.SGD(target_model.parameters(), lr=0.001, momentum=0.9) # optimizer
     lr = lr_scheduler.StepLR(opt, step_size=3, gamma=0.1)   # learning rate scheduler
 
-    return model, c, opt, lr
+    return target_model, c, opt, lr
 
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs):
