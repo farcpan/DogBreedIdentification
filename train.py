@@ -1,8 +1,7 @@
 from collections import OrderedDict
 from torch.optim import lr_scheduler
 from torchvision import datasets, models, transforms
-from tqdm import tqdm_notebook as tqdm      # for Google Colaboratory
-#from tqdm import tqdm
+from tqdm import tqdm
 
 import copy
 import matplotlib.pyplot as plt
@@ -16,10 +15,7 @@ import torch.optim as optim
 import torchvision
 
 from model import model
-
-
-def get_device():
-    return torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+from util import get_device
 
 
 def disp_image(data_loader, index):
@@ -185,7 +181,7 @@ if __name__ == "__main__":
     print("Start Training.")
 
     # device
-    device = get_device()   # cuda or cpu
+    device = get_device.get_device()   # cuda or cpu
     print("device: {}".format(device))
 
     # loading dataset
