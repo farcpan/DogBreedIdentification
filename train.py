@@ -101,7 +101,7 @@ def train_model(
 
             # training
             with torch.set_grad_enabled(True):
-                outputs = model(inputs.to(device))
+                outputs, _ = model(inputs.to(device))
                 torch.cuda.empty_cache()
 
                 _, preds = torch.max(outputs, 1)
@@ -149,7 +149,7 @@ def train_model(
             # forward
             # track history if only in train
             with torch.no_grad():
-                val_outputs = model(val_inputs)
+                val_outputs, _ = model(val_inputs)
                 _, preds = torch.max(val_outputs, 1)
                 loss = criterion(val_outputs, val_labels)
 
