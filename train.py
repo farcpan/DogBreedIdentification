@@ -1,8 +1,8 @@
 from collections import OrderedDict
 from torch.optim import lr_scheduler
 from torchvision import datasets, models, transforms
-#from tqdm import tqdm_notebook as tqdm      # for Google Colaboratory
-from tqdm import tqdm
+from tqdm import tqdm_notebook as tqdm      # for Google Colaboratory
+#from tqdm import tqdm
 
 import copy
 import matplotlib.pyplot as plt
