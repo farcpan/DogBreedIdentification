@@ -8,6 +8,7 @@ import os
 import pandas as pd
 import sys
 import time
+import torch
  
 
 class DogDataset(Dataset):
@@ -36,7 +37,7 @@ class DogDataset(Dataset):
 
 if __name__ == "__main__":
     since = time.time()
-    dataset = DogDataset("../labels/labels.csv", "../train", 
+    dataset = DogDataset("../labels/labels.csv", "./train", 
                             transform=transforms.Compose([
                                 transforms.RandomHorizontalFlip(),
                                 transforms.ToTensor()

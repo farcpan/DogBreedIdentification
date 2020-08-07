@@ -15,8 +15,7 @@ from util import get_device
 
 def load_saved_model(model_path, device, num_classes):
     base_model = models.resnext101_32x8d(pretrained=False)
-    loaded_model = model.DogClassificationModel(
-        model=base_model, num_classes=num_classes, mean=0.5, std=0.25)
+    loaded_model = model.DogClassificationModel(model=base_model, num_classes=num_classes, mean=0.5, std=0.25)
     loaded_model = loaded_model.to(device)
     loaded_model.load_state_dict(torch.load(model_path))
     loaded_model.eval()
@@ -25,7 +24,6 @@ def load_saved_model(model_path, device, num_classes):
 
 
 def predict(image_path, model, device, debug=False):
-    result_image = None
     result_breed_id = 0
 
     input_tensor = get_tensor.get_single_image_tensor(image_path, debug=False)
@@ -64,3 +62,4 @@ if __name__ == "__main__":
 
     # probability
     prob = np.exp(output_values) / np.sum(np.exp(output_values))
+    print(prob)
