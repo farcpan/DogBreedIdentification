@@ -182,19 +182,27 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs):
 
 if __name__ == "__main__":
     num_classes = 121
+    print("Start Training.")
 
     # device
     device = get_device()   # cuda or cpu
+    print("device: {}".format(device))
 
     # loading dataset
+    print("Dataset load: Start.")
+    since = time.time()
     train_data_loader, val_data_loader, t = load_DataLoader("./Dataset/train_loader.pth", "./Dataset/validation_loader.pth")
+    print("Done. {} [sec]".format(time.time() - since))
 
     # model, loss function, optimizer and lr
     model_ft, criterion, opt, exp_lr_scheduler = get_transfer_learning_model(num_classes)
 
     # training
+    print("Training start.")
+    since = time.time()
     trained_model = train_model(
-        model_ft, criterion, opt, exp_lr_scheduler, num_epochs=10)
+        model_ft, criterion, opt, exp_lr_scheduler, num_epochs=5)
+    print("Done. {} [sec]".format(time.time() - since))
 
     # save model
     torch.save(trained_model.state_dict(), "./trained_model")
