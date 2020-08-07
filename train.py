@@ -37,7 +37,7 @@ def load_DataLoader(path_train_loader, path_validation_loader, debug=False):
     return t_loader, v_loader, elapsed_time
 
 
-def get_transfer_learning_model(num_classes):
+def get_transfer_learning_model(target_model, num_classes):
     c = nn.CrossEntropyLoss()   # loss function
     opt = optim.SGD(target_model.parameters(), lr=0.001, momentum=0.9) # optimizer
     lr = lr_scheduler.StepLR(opt, step_size=3, gamma=0.1)   # learning rate scheduler
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     target_model = model.DogClassificationModel(model=base_model, num_classes=num_classes, mean=0.5, std=0.25)
 
     # loss function, optimizer and lr
-    criterion, opt, exp_lr_scheduler = get_transfer_learning_model(num_classes)
+    criterion, opt, exp_lr_scheduler = get_transfer_learning_model(target_model, num_classes)
 
     # training
     print("Training start.")
