@@ -201,7 +201,8 @@ if __name__ == "__main__":
     print("Training start.")
     since = time.time()
     trained_model = train_model(
-        model_ft, device, criterion, opt, exp_lr_scheduler, num_epochs=5)
+        model=model_ft, device=device, criterion=criterion, 
+        optimizer=opt, scheduler=exp_lr_scheduler, num_epochs=5)
     print("Done. {} [sec]".format(time.time() - since))
 
     # save model
