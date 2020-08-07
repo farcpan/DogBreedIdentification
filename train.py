@@ -149,7 +149,7 @@ def train_model(
             # forward
             # track history if only in train
             with torch.no_grad():
-                val_outputs = model(val_inputs)
+                val_outputs, _ = model(val_inputs)
                 _, preds = torch.max(val_outputs, 1)
                 loss = criterion(val_outputs, val_labels)
 
