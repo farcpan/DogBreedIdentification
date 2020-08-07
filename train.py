@@ -31,34 +31,24 @@ def disp_image(data_loader, index):
 
 def load_DataLoader(path_train_loader, path_validation_loader, debug=False):
     start = time.time()
-    t_loader = torch.load("./dataset/train_loader.pth")
-    v_loader = torch.load("./dataset/validation_loader.pth")
-    if debug:
-        print(val_data_loader)
-    
+    t_loader = torch.load(path_train_loader)
+    v_loader = torch.load(path_validation_loader)
     elapsed_time = time.time() - start
     return t_loader, v_loader, elapsed_time
 
 
 def get_transfer_learning_model(num_classes):
-    # downloading pretrained model
-    base_model = models.resnext101_32x8d(pretrained=True)
-
-    # model for dog classification
-    target_model = model.DogClassificationModel(
-        model=base_model, num_classes=num_classes, mean=0.5, std=0.25)
-
     c = nn.CrossEntropyLoss()   # loss function
     opt = optim.SGD(target_model.parameters(), lr=0.001, momentum=0.9) # optimizer
     lr = lr_scheduler.StepLR(opt, step_size=3, gamma=0.1)   # learning rate scheduler
-
-    return target_model, c, opt, lr
+    return c, opt, lr
 
 
 def train_model(
     model, 
     device, 
     train_data_loader,
+    valid_data_loader, 
     criterion, optimizer, scheduler, num_epochs=5):
     """
     training
@@ -70,7 +60,9 @@ def train_model(
     device : device
         cuda or cpu
     train_data_loader : dataloader
-        dataloader
+        dataloader for training
+    valid_data_loader : dataloader
+        dataloader for validation
     criterion : 
         Loss function.
     optimizer :
@@ -197,17 +189,26 @@ if __name__ == "__main__":
     # loading dataset
     print("Dataset load: Start.")
     since = time.time()
-    train_data_loader, val_data_loader, t = load_DataLoader("./Dataset/train_loader.pth", "./Dataset/validation_loader.pth")
+    train_data_loader, val_data_loader, t = load_DataLoader(
+        "./Dataset/train_loader.pth", "./Dataset/validation_loader.pth")
     print("Done. {} [sec]".format(time.time() - since))
 
-    # model, loss function, optimizer and lr
-    model_ft, criterion, opt, exp_lr_scheduler = get_transfer_learning_model(num_classes)
+    # model
+    #   downloading pretrained model
+    base_model = models.resnext101_32x8d(pretrained=True)
+    # model for dog classification
+    target_model = model.DogClassificationModel(model=base_model, num_classes=num_classes, mean=0.5, std=0.25)
+
+    # loss function, optimizer and lr
+    criterion, opt, exp_lr_scheduler = get_transfer_learning_model(num_classes)
 
     # training
     print("Training start.")
     since = time.time()
     trained_model = train_model(
-        model=model_ft, device=device, criterion=criterion, 
+        model=model_ft, device=device, 
+        train_data_loader=train_data_loader, valid_data_loader=val_data_loader,
+        criterion=criterion, 
         optimizer=opt, scheduler=exp_lr_scheduler, num_epochs=5)
     print("Done. {} [sec]".format(time.time() - since))
 
