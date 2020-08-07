@@ -101,7 +101,7 @@ def train_model(
 
             # training
             with torch.set_grad_enabled(True):
-                outputs = model(inputs.to(device))
+                outputs, _ = model(inputs.to(device))
                 torch.cuda.empty_cache()
 
                 _, preds = torch.max(outputs, 1)
