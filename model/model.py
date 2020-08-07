@@ -51,7 +51,7 @@ class OrgModel(nn.Module):
         x = x.view(-1, 2048)
         x = self.fc(x)
 
-        return x, z    
+        return x 
 
 
 class ExtendedModelForCoreML(nn.Module):
