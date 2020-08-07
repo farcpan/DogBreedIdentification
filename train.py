@@ -55,7 +55,7 @@ def get_transfer_learning_model(num_classes):
     return target_model, c, opt, lr
 
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs):
+def train_model(model, device, criterion, optimizer, scheduler, num_epochs):
     """
     training
 
@@ -63,6 +63,8 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs):
     --------------
     model : DogClassificationModel
         Network model to be trained.
+    device : device
+        cuda or cpu
     criterion : 
         Loss function.
     optimizer :
@@ -197,7 +199,7 @@ if __name__ == "__main__":
     print("Training start.")
     since = time.time()
     trained_model = train_model(
-        model_ft, criterion, opt, exp_lr_scheduler, num_epochs=5)
+        model_ft, device, criterion, opt, exp_lr_scheduler, num_epochs=5)
     print("Done. {} [sec]".format(time.time() - since))
 
     # save model
