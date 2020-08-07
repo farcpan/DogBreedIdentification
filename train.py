@@ -139,7 +139,7 @@ def train_model(
         val_running_corrects = 0
 
         # Iterate over data.
-        for inputs, labels in val_data_loader:
+        for inputs, labels in valid_data_loader:
             val_inputs = inputs.to(device)
             val_labels = labels.to(device)
 
@@ -157,7 +157,7 @@ def train_model(
             val_running_loss += loss.item() * val_inputs.size(0)
             val_running_corrects += torch.sum(preds == val_labels.data)
 
-        dataset_size = len(val_data_loader.dataset) 
+        dataset_size = len(valid_data_loader.dataset) 
         val_epoch_loss = val_running_loss / dataset_size
         val_epoch_acc = val_running_corrects.double() / dataset_size
 
