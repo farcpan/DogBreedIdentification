@@ -3,6 +3,78 @@ from torchvision import models
 import torch.nn as nn
 import torch.nn.functional as F
 
+class Bottleneck(nn.Module):
+    def __init__(self, in_channels, hidden_channels):
+        super(Bottleneck, self).__init__()
+        self.block1 = nn.Sequential(nn.Conv2d(in_channels, hidden_channels, kernel_size=1, stride=1), nn.BatchNorm2d(hidden_channels), nn.ReLU())
+        self.block2 = nn.Sequential(nn.Conv2d(hidden_channels, hidden_channels, kernel_size=3, stride=1, padding=1), nn.BatchNorm2d(hidden_channels), nn.ReLU())
+        self.block3 = nn.Sequential(nn.Conv2d(hidden_channels, in_channels, kernel_size=1, stride=1), nn.BatchNorm2d(in_channels))
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        id = x
+        x = self.block1(x)
+        x = self.block2(x)
+        x = self.block3(x)
+        x = x + id
+
+        return self.relu(x)
+
+
+class SimpleModel(nn.Module):
+    def __init__(self):
+        super(SimpleModel, self).__init__()
+
+        self.down1 = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1), 
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU()
+        )
+
+        self.resid1 = nn.Sequential(
+            Bottleneck(in_channels=64, hidden_channels=64),
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU()
+        )
+
+        self.resid2 = nn.Sequential(
+            Bottleneck(in_channels=128, hidden_channels=128),
+            Bottleneck(in_channels=128, hidden_channels=128),
+            nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU()
+        )
+
+        self.resid3 = nn.Sequential(
+            Bottleneck(in_channels=256, hidden_channels=256),
+            Bottleneck(in_channels=256, hidden_channels=256),
+            nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU()
+        )
+
+        self.fc1 = nn.Linear(512, 1024)
+        self.fc2 = nn.Linear(1024, 121)
+        self.relu = nn.ReLU()
+
+
+    def forward(self, x):
+        x = self.down1(x)
+        x = self.resid1(x)
+        x = self.resid2(x)
+        x = self.resid3(x)
+        x = F.adaptive_max_pool2d(x, (1, 1))
+        x = x.view(-1, x.shape[1] * x.shape[2] * x.shape[3])
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc2(x)
+
+        return x
+
 
 class DogClassificationModel(nn.Module):
     def __init__(self, model, num_classes, mean=0.5, std=0.25):
