@@ -69,6 +69,8 @@ def train_model(model, device, criterion, optimizer, scheduler, num_epochs=5):
         Loss function.
     optimizer :
         Optimizer.
+    scheduler : 
+        Learning rate scheduler.
     num_epochs : int
         The number of epochs.
 
