@@ -23,8 +23,10 @@ class DogClassificationModel(nn.Module):
 
 
 class OrgModel(nn.Module):
-    def __init__(self, num_classes):
+    def __init__(self, num_classes, attention=False):
         super(OrgModel, self).__init__()
+        self.attention = attention
+
         self.base_model = models.resnet50(pretrained=True)
         layers = list(self.base_model.children())[:4]
         self.model0 = nn.Sequential(*layers)
@@ -40,13 +42,17 @@ class OrgModel(nn.Module):
 
 
     def forward(self, x):
+        x = (x - 0.5) / 0.25
         x = self.model0(x)
         x = self.model1(x)
         y = F.adaptive_max_pool2d(x, (1, 1)).squeeze(2).squeeze(2)
         y = self.fc1(y)
         y = self.fc2(y)
         y = y.view(-1, 256, 1, 1)
-        z = x * y
+
+        z = x
+        if self.attention:
+            z = x * y
         x = self.model2(z)
         x = x.view(-1, 2048)
         x = self.fc(x)
