@@ -62,5 +62,5 @@ if __name__ == "__main__":
 
     output_values = np.reshape(raw_output.to("cpu").detach().numpy(), (num_classes, ))
 
-    plt.bar([i for i in range(121)], np.exp(output_values) / np.sum(np.exp(output_values)))
-    plt.show()
+    # probability
+    prob = np.exp(output_values) / np.sum(np.exp(output_values))
