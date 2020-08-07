@@ -23,7 +23,7 @@ class DogClassificationModel(nn.Module):
 
 
 class OrgModel(nn.Module):
-    def __init__(self, model, num_classes):
+    def __init__(self, num_classes):
         super(OrgModel, self).__init__()
         self.base_model = models.resnet50(pretrained=True)
         layers = list(self.base_model.children())[:4]
