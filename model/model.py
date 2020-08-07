@@ -32,8 +32,10 @@ class OrgModel(nn.Module):
         self.model0 = nn.Sequential(*layers)
         self.model1 = list(self.base_model.children())[4]
 
-        self.fc1 = nn.Linear(256, 256)
-        self.fc2 = nn.Linear(256, 256)
+        self.fc1 = nn.Linear(256, 64)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(64, 256)
+        self.sigmoid = nn.Sigmoid()
 
         layers2 = list(self.base_model.children())[5:9] 
         self.model2 = nn.Sequential(*layers2)
@@ -47,7 +49,9 @@ class OrgModel(nn.Module):
         x = self.model1(x)
         y = F.adaptive_max_pool2d(x, (1, 1)).squeeze(2).squeeze(2)
         y = self.fc1(y)
+        y = self.relu(y)
         y = self.fc2(y)
+        y = self.sigmoid(y)
         y = y.view(-1, 256, 1, 1)
 
         z = x
