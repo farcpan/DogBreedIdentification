@@ -194,84 +194,84 @@ class AttentionResnet50(nn.Module):
         #   Bottleneck1
         y = self.resnet2_bottleneck1_pre(x)
         z = self.resnet2_bottleneck1_skip(x)
-        if self.use_attention:
-            y = self.attention2_1(y)
+        #if self.use_attention:
+        #    y = self.attention2_1(y)
         x = self.resnet2_bottleneck1_relu(y + z)
 
         #   Bottleneck2
         y = self.resnet2_bottleneck2_pre(x)
-        if self.use_attention:
-            y = self.attention2_2(y)
+        #if self.use_attention:
+        #    y = self.attention2_2(y)
         x = self.resnet2_bottleneck2_relu(x + y)
 
         #   Bottleneck3
         y = self.resnet2_bottleneck3_pre(x)
-        if self.use_attention:
-            y = self.attention2_3(y)
+        #if self.use_attention:
+        #    y = self.attention2_3(y)
         x = self.resnet2_bottleneck3_relu(x + y)
 
         #   Bottleneck4
         y = self.resnet2_bottleneck4_pre(x)
-        if self.use_attention:
-            y = self.attention2_4(y)
+        #if self.use_attention:
+        #    y = self.attention2_4(y)
         x = self.resnet2_bottleneck4_relu(x + y)
 
         # Resnet3
         #   Bottleneck1
         y = self.resnet3_bottleneck1_pre(x)
         z = self.resnet3_bottleneck1_skip(x)
-        if self.use_attention:
-            y = self.attention3_1(y)
+        #if self.use_attention:
+        #    y = self.attention3_1(y)
         x = self.resnet3_bottleneck1_relu(y + z)
 
         #   Bottleneck2
         y = self.resnet3_bottleneck2_pre(x)
-        if self.use_attention:
-            y = self.attention3_2(y)
+        #if self.use_attention:
+        #    y = self.attention3_2(y)
         x = self.resnet3_bottleneck2_relu(x + y)
 
         #   Bottleneck3
         y = self.resnet3_bottleneck3_pre(x)
-        if self.use_attention:
-            y = self.attention3_3(y)
+        #if self.use_attention:
+        #    y = self.attention3_3(y)
         x = self.resnet3_bottleneck3_relu(x + y)
 
         #   Bottleneck4
         y = self.resnet3_bottleneck4_pre(x)
-        if self.use_attention:
-            y = self.attention3_4(y)
+        #if self.use_attention:
+        #    y = self.attention3_4(y)
         x = self.resnet3_bottleneck4_relu(x + y)
 
         #   Bottleneck5
         y = self.resnet3_bottleneck5_pre(x)
-        if self.use_attention:
-            y = self.attention3_5(y)
+        #if self.use_attention:
+        #    y = self.attention3_5(y)
         x = self.resnet3_bottleneck5_relu(x + y)
 
         #   Bottleneck6
         y = self.resnet3_bottleneck6_pre(x)
-        if self.use_attention:
-            y = self.attention3_6(y)
+        #if self.use_attention:
+        #    y = self.attention3_6(y)
         x = self.resnet3_bottleneck6_relu(x + y)
 
         # Resnet4
         #   Bottleneck1
         y = self.resnet4_bottleneck1_pre(x)
         z = self.resnet4_bottleneck1_skip(x)
-        if self.use_attention:
-            y = self.attention4_1(y)
+        #if self.use_attention:
+        #    y = self.attention4_1(y)
         x = self.resnet4_bottleneck1_relu(y + z)
 
         #   Bottleneck2
         y = self.resnet4_bottleneck2_pre(x)
-        if self.use_attention:
-            y = self.attention4_2(y)
+        #if self.use_attention:
+        #    y = self.attention4_2(y)
         x = self.resnet4_bottleneck2_relu(x + y)
 
         #   Bottleneck3
         y = self.resnet4_bottleneck3_pre(x)
-        if self.use_attention:
-            y = self.attention4_3(y)
+        #if self.use_attention:
+        #    y = self.attention4_3(y)
         x = self.resnet4_bottleneck3_relu(x + y)
 
         x = self.post_layers(x)
