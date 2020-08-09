@@ -279,6 +279,205 @@ class AttentionResnet50(nn.Module):
 
         return self.fc(x)
 
+
+class AttentionResnet50Sub(nn.Module):
+    def __init__(self, num_classes, use_attention=False, pretrained=False):
+        super(AttentionResnet50, self).__init__()
+
+        # num of classes
+        self.num_classes = num_classes
+
+        # attention?
+        self.use_attention = use_attention
+
+        # base model
+        base_model = models.resnet50(pretrained=pretrained)
+
+        # all layers
+        layers = list(base_model.children())
+
+        # Downsample: 1, 2, 3, 4
+        self.prelayers = nn.Sequential(*(layers[:4]))   # 0, 1, 2, 3
+
+        # Resnet1: 5
+        resnet1_layers = list(layers[4].children())
+
+        #   Bottleneck: 5-1
+        self.resnet1_1 = resnet1_layers[0]
+        self.attention1_1 = Attention(256, 256//16)
+
+        #   Bottleneck: 5-2
+        self.resnet1_2 = resnet1_layers[1]
+        self.attention1_2 = Attention(256, 256//16)
+
+        #   Bottleneck: 5-3
+        self.resnet1_3 = resnet1_layers[2]
+        self.attention1_3 = Attention(256, 256//16)
+
+        # Resnet2: 6
+        resnet2_layers = list(layers[5].children())
+
+        #   Bottleneck: 6-1
+        self.resnet2_1 = resnet2_layers[0]
+        self.attention2_1 = Attention(512, 512//16)
+
+        #   Bottleneck: 6-2
+        self.resnet2_2 = resnet2_layers[1]
+        self.attention2_2 = Attention(512, 512//16)
+
+        #   Bottleneck: 6-3
+        self.resnet2_3 = resnet2_layers[2]
+        self.attention2_3 = Attention(512, 512//16)
+
+        #   Bottleneck: 6-4
+        self.resnet2_4 = resnet2_layers[3]
+        self.attention2_4 = Attention(512, 512//16)
+
+        # Resnet3: 7
+        resnet3_layers = list(layers[6].children())
+
+        #   Bottleneck: 7-1
+        self.resnet3_1 = resnet3_layers[0]
+        self.attention3_1 = Attention(1024, 1024//16)
+
+        #   Bottleneck: 7-2
+        self.resnet3_2 = resnet3_layers[1]
+        self.attention3_2 = Attention(1024, 1024//16)
+
+        #   Bottleneck: 7-3
+        self.resnet3_3 = resnet3_layers[2]
+        self.attention3_3 = Attention(1024, 1024//16)
+
+        #   Bottleneck: 7-4
+        self.resnet3_4 = resnet3_layers[3]
+        self.attention3_4 = Attention(1024, 1024//16)
+
+        #   Bottleneck: 7-5
+        self.resnet3_5 = resnet3_layers[4]
+        self.attention3_5 = Attention(1024, 1024//16)
+
+        #   Bottleneck: 7-6
+        self.resnet3_6 = resnet3_layers[5]
+        self.attention3_6 = Attention(1024, 1024//16)
+
+        # Resnet4: 8
+        resnet4_layers = list(layers[7].children())
+
+        #   Bottleneck: 8-1
+        self.resnet4_1 = resnet4_layers[0]
+        self.attention4_1 = Attention(2048, 2048//16)
+
+        #   Bottleneck: 8-2
+        self.resnet4_2 = resnet4_layers[1]
+        self.attention4_2 = Attention(2048, 2048//16)
+
+        #   Bottleneck: 8-3
+        self.resnet4_3 = resnet4_layers[2]
+        self.attention4_3 = Attention(2048, 2048//16)
+
+
+        # post layers
+        self.post_layers = nn.Sequential(*(layers[8:9]))
+        self.fc = nn.Linear(2048, self.num_classes) 
+
+        
+    def forward(self, x):
+        # normalizing inputs
+        x = (x - 0.5) / 0.25 
+
+        # downsample
+        x = self.prelayers(x)
+
+        # Resnet1
+        #   Bottleneck1
+        x = self.resnet1_1(x)
+        if self.use_attention:
+            x = self.attention1_1(x)
+ 
+        #   Bottleneck2
+        x = self.resnet1_2(x)
+        if self.use_attention:
+            x = self.attention1_2(x)
+
+        #   Bottleneck3
+        x = self.resnet1_3(x)
+        if self.use_attention:
+            x = self.attention1_3(x)
+
+        # Resnet2
+        #   Bottleneck1
+        x = self.resnet2_1(x)
+        if self.use_attention:
+            x = self.attention2_1(x)
+
+        #   Bottleneck2
+        x = self.resnet2_2(x)
+        if self.use_attention:
+            x = self.attention2_2(x)
+
+        #   Bottleneck3
+        x = self.resnet2_3(x)
+        if self.use_attention:
+            x = self.attention2_3(x)
+
+        #   Bottleneck4
+        x = self.resnet2_4(x)
+        if self.use_attention:
+            x = self.attention2_4(x)
+
+        # Resnet3
+        #   Bottleneck1
+        x = self.resnet3_1(x)
+        if self.use_attention:
+            x = self.attention3_1(x)
+
+        #   Bottleneck2
+        x = self.resnet3_2(x)
+        if self.use_attention:
+            x = self.attention3_2(x)
+
+        #   Bottleneck3
+        x = self.resnet3_3(x)
+        if self.use_attention:
+            x = self.attention3_3(x)
+
+        #   Bottleneck4
+        x = self.resnet3_4(x)
+        if self.use_attention:
+            x = self.attention3_4(x)
+
+        #   Bottleneck5
+        x = self.resnet3_5(x)
+        if self.use_attention:
+            x = self.attention3_5(x)
+
+        #   Bottleneck6
+        x = self.resnet3_6(x)
+        if self.use_attention:
+            x = self.attention3_6(x)
+
+        # Resnet4
+        #   Bottleneck1
+        x = self.resnet4_1(x)
+        if self.use_attention:
+            x = self.attention4_1(x)
+
+        #   Bottleneck2
+        x = self.resnet4_2(x)
+        if self.use_attention:
+            x = self.attention4_2(x)
+
+        #   Bottleneck3
+        x = self.resnet4_3(x)
+        if self.use_attention:
+            x = self.attention4_3(x)
+
+        x = self.post_layers(x)
+        x = x.view(-1, 2048)
+
+        return self.fc(x)
+
+
 if __name__ == '__main__':
     model = AttentionResnet50(num_classes=120, use_attention=True, pretrained=True)
 
