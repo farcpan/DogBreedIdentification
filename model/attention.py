@@ -90,13 +90,13 @@ class AttentionResnet50(nn.Module):
         y = self.resnet1_bottleneck2_pre(x)
         y = self.attention1_2(y)
         x = self.resnet1_bottleneck2_relu(x + y)
-        print(x.shape)
+        #print(x.shape)
 
         #   Bottleneck3
         y = self.resnet1_bottleneck3_pre(x)
         y = self.attention1_3(y)
         x = self.resnet1_bottleneck3_relu(x + y)
-        print(x.shape)
+        #print(x.shape)
 
         x = self.post_layers(x)
         x = x.view(-1, 2048)
