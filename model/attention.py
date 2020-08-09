@@ -282,7 +282,7 @@ class AttentionResnet50(nn.Module):
 
 class AttentionResnet50Sub(nn.Module):
     def __init__(self, num_classes, use_attention=False, pretrained=False):
-        super(AttentionResnet50, self).__init__()
+        super(AttentionResnet50Sub, self).__init__()
 
         # num of classes
         self.num_classes = num_classes
