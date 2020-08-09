@@ -73,6 +73,9 @@ class AttentionResnet50(nn.Module):
 
         
     def forward(self, x):
+        # normalizing inputs
+        x = (x - 0.5) / 0.25 
+
         # downsample
         x = self.prelayers(x)
 
