@@ -40,6 +40,9 @@ class AttentionResnet50(nn.Module):
         # base model
         base_model = models.resnet50(pretrained=pretrained)
 
+        # relu
+        self.relu = nn.ReLU(inplace=True)
+
         self.prelayers = nn.Sequential(
             base_model.conv1,
             base_model.bn1,
@@ -56,168 +59,184 @@ class AttentionResnet50(nn.Module):
         self.bottleneck1_1 = nn.Sequential(
             bottleneck1_1.conv1,
             bottleneck1_1.bn1, 
+            self.relu,
             bottleneck1_1.conv2,
             bottleneck1_1.bn2,
+            self.relu,
             bottleneck1_1.conv3,
             bottleneck1_1.bn3)
         self.resnet1_downsample = bottleneck1_1.downsample
-        self.bottleneck1_1_relu = bottleneck1_1.relu
         
         bottleneck1_2 = layer1[1]
         self.bottleneck1_2 = nn.Sequential(
             bottleneck1_2.conv1,
             bottleneck1_2.bn1, 
+            self.relu,
             bottleneck1_2.conv2,
             bottleneck1_2.bn2,
+            self.relu,
             bottleneck1_2.conv3,
             bottleneck1_2.bn3)
-        self.bottleneck1_2_relu = bottleneck1_2.relu
 
         bottleneck1_3 = layer1[2]
         self.bottleneck1_3 = nn.Sequential(
             bottleneck1_3.conv1,
             bottleneck1_3.bn1, 
+            self.relu,
             bottleneck1_3.conv2,
             bottleneck1_3.bn2,
+            self.relu,
             bottleneck1_3.conv3,
             bottleneck1_3.bn3)
-        self.bottleneck1_3_relu = bottleneck1_3.relu
 
         # Resnet2
         bottleneck2_1 = layer2[0]
         self.bottleneck2_1 = nn.Sequential(
             bottleneck2_1.conv1,
             bottleneck2_1.bn1, 
+            self.relu,
             bottleneck2_1.conv2,
             bottleneck2_1.bn2,
+            self.relu,
             bottleneck2_1.conv3,
             bottleneck2_1.bn3)
         self.resnet2_downsample = bottleneck2_1.downsample
-        self.bottleneck2_1_relu = bottleneck2_1.relu
         
         bottleneck2_2 = layer2[1]
         self.bottleneck2_2 = nn.Sequential(
             bottleneck2_2.conv1,
             bottleneck2_2.bn1, 
+            self.relu,
             bottleneck2_2.conv2,
             bottleneck2_2.bn2,
+            self.relu,
             bottleneck2_2.conv3,
             bottleneck2_2.bn3)
-        self.bottleneck2_2_relu = bottleneck2_2.relu
 
         bottleneck2_3 = layer2[2]
         self.bottleneck2_3 = nn.Sequential(
             bottleneck2_3.conv1,
             bottleneck2_3.bn1, 
+            self.relu,
             bottleneck2_3.conv2,
             bottleneck2_3.bn2,
+            self.relu,
             bottleneck2_3.conv3,
             bottleneck2_3.bn3)
-        self.bottleneck2_3_relu = bottleneck2_3.relu
 
         bottleneck2_4 = layer2[3]
         self.bottleneck2_4 = nn.Sequential(
             bottleneck2_4.conv1,
             bottleneck2_4.bn1, 
+            self.relu,
             bottleneck2_4.conv2,
             bottleneck2_4.bn2,
+            self.relu,
             bottleneck2_4.conv3,
             bottleneck2_4.bn3)
-        self.bottleneck2_4_relu = bottleneck2_4.relu
 
         # Resnet3
         bottleneck3_1 = layer3[0]
         self.bottleneck3_1 = nn.Sequential(
             bottleneck3_1.conv1,
             bottleneck3_1.bn1, 
+            self.relu,
             bottleneck3_1.conv2,
             bottleneck3_1.bn2,
+            self.relu,
             bottleneck3_1.conv3,
             bottleneck3_1.bn3)
         self.resnet3_downsample = bottleneck3_1.downsample
-        self.bottleneck3_1_relu = bottleneck3_1.relu
         
         bottleneck3_2 = layer3[1]
         self.bottleneck3_2 = nn.Sequential(
             bottleneck3_2.conv1,
             bottleneck3_2.bn1, 
+            self.relu,
             bottleneck3_2.conv2,
             bottleneck3_2.bn2,
+            self.relu,
             bottleneck3_2.conv3,
             bottleneck3_2.bn3)
-        self.bottleneck3_2_relu = bottleneck3_2.relu
 
         bottleneck3_3 = layer3[2]
         self.bottleneck3_3 = nn.Sequential(
             bottleneck3_3.conv1,
             bottleneck3_3.bn1, 
+            self.relu,
             bottleneck3_3.conv2,
             bottleneck3_3.bn2,
+            self.relu,
             bottleneck3_3.conv3,
             bottleneck3_3.bn3)
-        self.bottleneck3_3_relu = bottleneck3_3.relu
 
         bottleneck3_4 = layer3[3]
         self.bottleneck3_4 = nn.Sequential(
             bottleneck3_4.conv1,
             bottleneck3_4.bn1, 
+            self.relu,
             bottleneck3_4.conv2,
             bottleneck3_4.bn2,
+            self.relu,
             bottleneck3_4.conv3,
             bottleneck3_4.bn3)
-        self.bottleneck3_4_relu = bottleneck3_4.relu
 
         bottleneck3_5 = layer3[4]
         self.bottleneck3_5 = nn.Sequential(
             bottleneck3_5.conv1,
             bottleneck3_5.bn1, 
+            self.relu,
             bottleneck3_5.conv2,
             bottleneck3_5.bn2,
+            self.relu,
             bottleneck3_5.conv3,
             bottleneck3_5.bn3)
-        self.bottleneck3_5_relu = bottleneck3_5.relu
 
         bottleneck3_6 = layer3[5]
         self.bottleneck3_6 = nn.Sequential(
             bottleneck3_6.conv1,
             bottleneck3_6.bn1, 
+            self.relu,
             bottleneck3_6.conv2,
             bottleneck3_6.bn2,
+            self.relu,
             bottleneck3_6.conv3,
             bottleneck3_6.bn3)
-        self.bottleneck3_6_relu = bottleneck3_6.relu
 
         # Resnet4
         bottleneck4_1 = layer4[0]
         self.bottleneck4_1 = nn.Sequential(
             bottleneck4_1.conv1,
             bottleneck4_1.bn1, 
+            self.relu,
             bottleneck4_1.conv2,
             bottleneck4_1.bn2,
+            self.relu,
             bottleneck4_1.conv3,
             bottleneck4_1.bn3)
         self.resnet4_downsample = bottleneck4_1.downsample
-        self.bottleneck4_1_relu = bottleneck4_1.relu
         
         bottleneck4_2 = layer4[1]
         self.bottleneck4_2 = nn.Sequential(
             bottleneck4_2.conv1,
             bottleneck4_2.bn1, 
+            self.relu,
             bottleneck4_2.conv2,
             bottleneck4_2.bn2,
+            self.relu,
             bottleneck4_2.conv3,
             bottleneck4_2.bn3)
-        self.bottleneck4_2_relu = bottleneck4_2.relu
 
         bottleneck4_3 = layer4[2]
         self.bottleneck4_3 = nn.Sequential(
             bottleneck4_3.conv1,
             bottleneck4_3.bn1, 
+            self.relu,
             bottleneck4_3.conv2,
             bottleneck4_3.bn2,
+            self.relu,
             bottleneck4_3.conv3,
             bottleneck4_3.bn3)
-        self.bottleneck4_3_relu = bottleneck4_3.relu
 
         self.avgpool = base_model.avgpool
         self.fc = nn.Linear(2048, num_classes)
@@ -235,76 +254,76 @@ class AttentionResnet50(nn.Module):
         #
         y = self.resnet1_downsample(x)
         x = self.bottleneck1_1(x)
-        x = self.bottleneck1_1_relu(x + y)
+        x = self.relu(x + y)
 
         identity = x
         y = self.bottleneck1_2(x)
-        x = self.bottleneck1_2_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck1_3(x)
-        x = self.bottleneck1_3_relu(y + identity)
+        x = self.relu(y + identity)
 
         #
         # ResNet2
         #
         y = self.bottleneck2_1(x)
         x = self.resnet2_downsample(x)
-        x = self.bottleneck2_1_relu(y + x)
+        x = self.relu(y + x)
 
         identity = x
         y = self.bottleneck2_2(x)
-        x = self.bottleneck2_2_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck2_3(x)
-        x = self.bottleneck2_3_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck2_4(x)
-        x = self.bottleneck2_4_relu(y + identity)
+        x = self.relu(y + identity)
 
         #
         # ResNet3
         #
         y = self.bottleneck3_1(x)
         x = self.resnet3_downsample(x)
-        x = self.bottleneck3_1_relu(x + y)
+        x = self.relu(x + y)
 
         identity = x
         y = self.bottleneck3_2(x)
-        x = self.bottleneck3_2_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_3(x)
-        x = self.bottleneck3_3_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_4(x)
-        x = self.bottleneck3_4_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_5(x)
-        x = self.bottleneck3_5_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_6(x)
-        x = self.bottleneck3_6_relu(y + identity)
+        x = self.relu(y + identity)
 
         #
         # ResNet4
         #
         y = self.bottleneck4_1(x)
         x = self.resnet4_downsample(x)
-        x = self.bottleneck4_1_relu(x)
+        x = self.relu(x + y)
 
         identity = x
         y = self.bottleneck4_2(x)
-        x = self.bottleneck4_2_relu(y + identity)
+        x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck4_3(x)
-        x = self.bottleneck4_3_relu(y + identity)
+        x = self.relu(y + identity)
 
         # post process
         x = self.avgpool(x)
