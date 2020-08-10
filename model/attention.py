@@ -40,127 +40,171 @@ class AttentionResnet50(nn.Module):
         # base model
         base_model = models.resnet50(pretrained=pretrained)
 
-        # all layers
-        layers = list(base_model.children())
+        self.prelayers = nn.Sequential(
+            base_model.conv1,
+            base_model.bn1,
+            base_model.relu,
+            base_model.maxpool)
 
-        # Downsample: 1, 2, 3, 4
-        self.prelayers = nn.Sequential(*(layers[:4]))   # 0, 1, 2, 3
+        layer1 = base_model.layer1
+        layer2 = base_model.layer2
+        layer3 = base_model.layer3
+        layer4 = base_model.layer4
 
-        # Resnet1: 5
-        resnet1_layers = list(layers[4].children())
+        # Resnet1
+        bottleneck1_1 = layer1[0]
+        self.bottleneck1_1 = nn.Sequential(
+            bottleneck1_1.conv1,
+            bottleneck1_1.bn1, 
+            bottleneck1_1.conv2,
+            bottleneck1_1.bn2,
+            bottleneck1_1.conv3,
+            bottleneck1_1.bn3)
+        self.resnet1_downsample = bottleneck1_1.downsample
+        
+        bottleneck1_2 = layer1[1]
+        self.bottleneck1_2 = nn.Sequential(
+            bottleneck1_2.conv1,
+            bottleneck1_2.bn1, 
+            bottleneck1_2.conv2,
+            bottleneck1_2.bn2,
+            bottleneck1_2.conv3,
+            bottleneck1_2.bn3)
 
-        #   Bottleneck: 5-1
-        resnet1_bottleneck1_layers = list(resnet1_layers[0].children())
-        self.resnet1_bottleneck1_pre = nn.Sequential(*(resnet1_bottleneck1_layers[:5])) # Conv2d > BN > Conv2d > BN > Conv2d > BN
-        self.resnet1_bottleneck1_skip = nn.Sequential(*(resnet1_bottleneck1_layers[7])) # Sequntial(Conv2d > BN)
-        self.resnet1_bottleneck1_relu = resnet1_bottleneck1_layers[6]
-        self.attention1_1 = Attention(256, 256//16)
+        bottleneck1_3 = layer1[2]
+        self.bottleneck1_3 = nn.Sequential(
+            bottleneck1_3.conv1,
+            bottleneck1_3.bn1, 
+            bottleneck1_3.conv2,
+            bottleneck1_3.bn2,
+            bottleneck1_3.conv3,
+            bottleneck1_3.bn3)
 
-        #   Bottleneck: 5-2
-        resnet1_bottleneck2_layers = list(resnet1_layers[1].children())
-        self.resnet1_bottleneck2_pre = nn.Sequential(*(resnet1_bottleneck2_layers[:5]))
-        self.resnet1_bottleneck2_relu = resnet1_bottleneck2_layers[6] 
-        self.attention1_2 = Attention(256, 256//16)
+        # Resnet2
+        bottleneck2_1 = layer2[0]
+        self.bottleneck2_1 = nn.Sequential(
+            bottleneck2_1.conv1,
+            bottleneck2_1.bn1, 
+            bottleneck2_1.conv2,
+            bottleneck2_1.bn2,
+            bottleneck2_1.conv3,
+            bottleneck2_1.bn3)
+        self.resnet2_downsample = bottleneck2_1.downsample
+        
+        bottleneck2_2 = layer2[1]
+        self.bottleneck2_2 = nn.Sequential(
+            bottleneck2_2.conv1,
+            bottleneck2_2.bn1, 
+            bottleneck2_2.conv2,
+            bottleneck2_2.bn2,
+            bottleneck2_2.conv3,
+            bottleneck2_2.bn3)
 
-        #   Bottleneck: 5-3
-        resnet1_bottleneck3_layers = list(resnet1_layers[2].children())
-        self.resnet1_bottleneck3_pre = nn.Sequential(*(resnet1_bottleneck3_layers[:5]))
-        self.resnet1_bottleneck3_relu = resnet1_bottleneck3_layers[6] 
-        self.attention1_3 = Attention(256, 256//16)
+        bottleneck2_3 = layer2[2]
+        self.bottleneck2_3 = nn.Sequential(
+            bottleneck2_3.conv1,
+            bottleneck2_3.bn1, 
+            bottleneck2_3.conv2,
+            bottleneck2_3.bn2,
+            bottleneck2_3.conv3,
+            bottleneck2_3.bn3)
 
-        # Resnet2: 6
-        resnet2_layers = list(layers[5].children())
+        bottleneck2_4 = layer2[3]
+        self.bottleneck2_4 = nn.Sequential(
+            bottleneck2_4.conv1,
+            bottleneck2_4.bn1, 
+            bottleneck2_4.conv2,
+            bottleneck2_4.bn2,
+            bottleneck2_4.conv3,
+            bottleneck2_4.bn3)
 
-        #   Bottleneck: 6-1
-        resnet2_bottleneck1_layers = list(resnet2_layers[0].children())
-        self.resnet2_bottleneck1_pre = nn.Sequential(*(resnet2_bottleneck1_layers[:5])) # Conv2d > BN > Conv2d > BN > Conv2d > BN
-        self.resnet2_bottleneck1_skip = nn.Sequential(*(resnet2_bottleneck1_layers[7])) # Sequntial(Conv2d > BN)
-        self.resnet2_bottleneck1_relu = resnet2_bottleneck1_layers[6]
-        self.attention2_1 = Attention(512, 512//16)
+        # Resnet3
+        bottleneck3_1 = layer3[0]
+        self.bottleneck3_1 = nn.Sequential(
+            bottleneck3_1.conv1,
+            bottleneck3_1.bn1, 
+            bottleneck3_1.conv2,
+            bottleneck3_1.bn2,
+            bottleneck3_1.conv3,
+            bottleneck3_1.bn3)
+        self.resnet3_downsample = bottleneck3_1.downsample
+        
+        bottleneck3_2 = layer3[1]
+        self.bottleneck3_2 = nn.Sequential(
+            bottleneck3_2.conv1,
+            bottleneck3_2.bn1, 
+            bottleneck3_2.conv2,
+            bottleneck3_2.bn2,
+            bottleneck3_2.conv3,
+            bottleneck3_2.bn3)
 
-        #   Bottleneck: 6-2
-        resnet2_bottleneck2_layers = list(resnet2_layers[1].children())
-        self.resnet2_bottleneck2_pre = nn.Sequential(*(resnet2_bottleneck2_layers[:5]))
-        self.resnet2_bottleneck2_relu = resnet2_bottleneck2_layers[6] 
-        self.attention2_2 = Attention(512, 512//16)
+        bottleneck3_3 = layer3[2]
+        self.bottleneck3_3 = nn.Sequential(
+            bottleneck3_3.conv1,
+            bottleneck3_3.bn1, 
+            bottleneck3_3.conv2,
+            bottleneck3_3.bn2,
+            bottleneck3_3.conv3,
+            bottleneck3_3.bn3)
 
-        #   Bottleneck: 6-3
-        resnet2_bottleneck3_layers = list(resnet2_layers[2].children())
-        self.resnet2_bottleneck3_pre = nn.Sequential(*(resnet2_bottleneck3_layers[:5]))
-        self.resnet2_bottleneck3_relu = resnet2_bottleneck3_layers[6] 
-        self.attention2_3 = Attention(512, 512//16)
+        bottleneck3_4 = layer3[3]
+        self.bottleneck3_4 = nn.Sequential(
+            bottleneck3_4.conv1,
+            bottleneck3_4.bn1, 
+            bottleneck3_4.conv2,
+            bottleneck3_4.bn2,
+            bottleneck3_4.conv3,
+            bottleneck3_4.bn3)
 
-        #   Bottleneck: 6-4
-        resnet2_bottleneck4_layers = list(resnet2_layers[3].children())
-        self.resnet2_bottleneck4_pre = nn.Sequential(*(resnet2_bottleneck4_layers[:5]))
-        self.resnet2_bottleneck4_relu = resnet2_bottleneck4_layers[6] 
-        self.attention2_4 = Attention(512, 512//16)
+        bottleneck3_5 = layer3[4]
+        self.bottleneck3_5 = nn.Sequential(
+            bottleneck3_5.conv1,
+            bottleneck3_5.bn1, 
+            bottleneck3_5.conv2,
+            bottleneck3_5.bn2,
+            bottleneck3_5.conv3,
+            bottleneck3_5.bn3)
 
-        # Resnet3: 7
-        resnet3_layers = list(layers[6].children())
+        bottleneck3_6 = layer3[5]
+        self.bottleneck3_6 = nn.Sequential(
+            bottleneck3_6.conv1,
+            bottleneck3_6.bn1, 
+            bottleneck3_6.conv2,
+            bottleneck3_6.bn2,
+            bottleneck3_6.conv3,
+            bottleneck3_6.bn3)
 
-        #   Bottleneck: 7-1
-        resnet3_bottleneck1_layers = list(resnet3_layers[0].children())
-        self.resnet3_bottleneck1_pre = nn.Sequential(*(resnet3_bottleneck1_layers[:5])) # Conv2d > BN > Conv2d > BN > Conv2d > BN
-        self.resnet3_bottleneck1_skip = nn.Sequential(*(resnet3_bottleneck1_layers[7])) # Sequntial(Conv2d > BN)
-        self.resnet3_bottleneck1_relu = resnet3_bottleneck1_layers[6]
-        self.attention3_1 = Attention(1024, 1024//16)
+        # Resnet4
+        bottleneck4_1 = layer4[0]
+        self.bottleneck4_1 = nn.Sequential(
+            bottleneck4_1.conv1,
+            bottleneck4_1.bn1, 
+            bottleneck4_1.conv2,
+            bottleneck4_1.bn2,
+            bottleneck4_1.conv3,
+            bottleneck4_1.bn3)
+        self.resnet4_downsample = bottleneck4_1.downsample
+        
+        bottleneck4_2 = layer4[1]
+        self.bottleneck4_2 = nn.Sequential(
+            bottleneck4_2.conv1,
+            bottleneck4_2.bn1, 
+            bottleneck4_2.conv2,
+            bottleneck4_2.bn2,
+            bottleneck4_2.conv3,
+            bottleneck4_2.bn3)
 
-        #   Bottleneck: 7-2
-        resnet3_bottleneck2_layers = list(resnet3_layers[1].children())
-        self.resnet3_bottleneck2_pre = nn.Sequential(*(resnet3_bottleneck2_layers[:5]))
-        self.resnet3_bottleneck2_relu = resnet3_bottleneck2_layers[6] 
-        self.attention3_2 = Attention(1024, 1024//16)
+        bottleneck4_3 = layer4[2]
+        self.bottleneck4_3 = nn.Sequential(
+            bottleneck4_3.conv1,
+            bottleneck4_3.bn1, 
+            bottleneck4_3.conv2,
+            bottleneck4_3.bn2,
+            bottleneck4_3.conv3,
+            bottleneck4_3.bn3)
 
-        #   Bottleneck: 7-3
-        resnet3_bottleneck3_layers = list(resnet3_layers[2].children())
-        self.resnet3_bottleneck3_pre = nn.Sequential(*(resnet3_bottleneck3_layers[:5]))
-        self.resnet3_bottleneck3_relu = resnet3_bottleneck3_layers[6] 
-        self.attention3_3 = Attention(1024, 1024//16)
-
-        #   Bottleneck: 7-4
-        resnet3_bottleneck4_layers = list(resnet3_layers[3].children())
-        self.resnet3_bottleneck4_pre = nn.Sequential(*(resnet3_bottleneck4_layers[:5]))
-        self.resnet3_bottleneck4_relu = resnet3_bottleneck4_layers[6] 
-        self.attention3_4 = Attention(1024, 1024//16)
-
-        #   Bottleneck: 7-5
-        resnet3_bottleneck5_layers = list(resnet3_layers[4].children())
-        self.resnet3_bottleneck5_pre = nn.Sequential(*(resnet3_bottleneck5_layers[:5]))
-        self.resnet3_bottleneck5_relu = resnet3_bottleneck5_layers[6] 
-        self.attention3_5 = Attention(1024, 1024//16)
-
-        #   Bottleneck: 7-6
-        resnet3_bottleneck6_layers = list(resnet3_layers[5].children())
-        self.resnet3_bottleneck6_pre = nn.Sequential(*(resnet3_bottleneck6_layers[:5]))
-        self.resnet3_bottleneck6_relu = resnet3_bottleneck6_layers[6] 
-        self.attention3_6 = Attention(1024, 1024//16)
-
-        # Resnet4: 8
-        resnet4_layers = list(layers[7].children())
-
-        #   Bottleneck: 8-1
-        resnet4_bottleneck1_layers = list(resnet4_layers[0].children())
-        self.resnet4_bottleneck1_pre = nn.Sequential(*(resnet4_bottleneck1_layers[:5])) # Conv2d > BN > Conv2d > BN > Conv2d > BN
-        self.resnet4_bottleneck1_skip = nn.Sequential(*(resnet4_bottleneck1_layers[7])) # Sequntial(Conv2d > BN)
-        self.resnet4_bottleneck1_relu = resnet4_bottleneck1_layers[6]
-        self.attention4_1 = Attention(2048, 2048//16)
-
-        #   Bottleneck: 7-2
-        resnet4_bottleneck2_layers = list(resnet4_layers[1].children())
-        self.resnet4_bottleneck2_pre = nn.Sequential(*(resnet4_bottleneck2_layers[:5]))
-        self.resnet4_bottleneck2_relu = resnet4_bottleneck2_layers[6] 
-        self.attention4_2 = Attention(2048, 2048//16)
-
-        #   Bottleneck: 7-3
-        resnet4_bottleneck3_layers = list(resnet4_layers[2].children())
-        self.resnet4_bottleneck3_pre = nn.Sequential(*(resnet4_bottleneck3_layers[:5]))
-        self.resnet4_bottleneck3_relu = resnet4_bottleneck3_layers[6] 
-        self.attention4_3 = Attention(2048, 2048//16)
-
-        # post layers
-        self.post_layers = nn.Sequential(*(layers[8:9]))
-        self.fc = nn.Linear(2048, self.num_classes) 
+        self.avgpool = base_model.avgpool
+        self.fc = nn.Linear(2048, num_classes)
 
         
     def forward(self, x):
@@ -170,111 +214,78 @@ class AttentionResnet50(nn.Module):
         # downsample
         x = self.prelayers(x)
 
+        print("End of prelayers: {}".format(x.shape))
+
+        #
         # Resnet1
-        #   Bottleneck1
-        y = self.resnet1_bottleneck1_pre(x)
-        z = self.resnet1_bottleneck1_skip(x)
-        if self.use_attention:
-            y = self.attention1_1(y)
-        x = self.resnet1_bottleneck1_relu(y + z)
+        #
+        y = self.bottleneck1_1(x)
+        x = self.resnet1_downsample(x)
+        x = y + x
 
-        #   Bottleneck2
-        y = self.resnet1_bottleneck2_pre(x)
-        if self.use_attention:
-            y = self.attention1_2(y)
-        x = self.resnet1_bottleneck2_relu(x + y)
+        y = x
+        x = self.bottleneck1_2(x) + y
 
-        #   Bottleneck3
-        y = self.resnet1_bottleneck3_pre(x)
-        if self.use_attention:
-            y = self.attention1_3(y)
-        x = self.resnet1_bottleneck3_relu(x + y)
+        y = x
+        x = self.bottleneck1_3(x) + y
 
-        # Resnet2
-        #   Bottleneck1
-        y = self.resnet2_bottleneck1_pre(x)
-        z = self.resnet2_bottleneck1_skip(x)
-        #if self.use_attention:
-        #    y = self.attention2_1(y)
-        x = self.resnet2_bottleneck1_relu(y + z)
+        print("End of resnet1: {}".format(x.shape))
 
-        #   Bottleneck2
-        y = self.resnet2_bottleneck2_pre(x)
-        #if self.use_attention:
-        #    y = self.attention2_2(y)
-        x = self.resnet2_bottleneck2_relu(x + y)
+        #
+        # ResNet2
+        #
+        y = self.bottleneck2_1(x)
+        x = self.resnet2_downsample(x)
+        x = y + x
 
-        #   Bottleneck3
-        y = self.resnet2_bottleneck3_pre(x)
-        #if self.use_attention:
-        #    y = self.attention2_3(y)
-        x = self.resnet2_bottleneck3_relu(x + y)
+        y = x
+        x = self.bottleneck2_2(x) + y
 
-        #   Bottleneck4
-        y = self.resnet2_bottleneck4_pre(x)
-        #if self.use_attention:
-        #    y = self.attention2_4(y)
-        x = self.resnet2_bottleneck4_relu(x + y)
+        y = x
+        x = self.bottleneck2_3(x) + y
 
-        # Resnet3
-        #   Bottleneck1
-        y = self.resnet3_bottleneck1_pre(x)
-        z = self.resnet3_bottleneck1_skip(x)
-        #if self.use_attention:
-        #    y = self.attention3_1(y)
-        x = self.resnet3_bottleneck1_relu(y + z)
+        y = x
+        x = self.bottleneck2_4(x) + y
 
-        #   Bottleneck2
-        y = self.resnet3_bottleneck2_pre(x)
-        #if self.use_attention:
-        #    y = self.attention3_2(y)
-        x = self.resnet3_bottleneck2_relu(x + y)
+        #
+        # ResNet3
+        #
+        y = self.bottleneck3_1(x)
+        x = self.resnet3_downsample(x)
+        x = y + x
 
-        #   Bottleneck3
-        y = self.resnet3_bottleneck3_pre(x)
-        #if self.use_attention:
-        #    y = self.attention3_3(y)
-        x = self.resnet3_bottleneck3_relu(x + y)
+        y = x
+        x = self.bottleneck3_2(x) + y
 
-        #   Bottleneck4
-        y = self.resnet3_bottleneck4_pre(x)
-        #if self.use_attention:
-        #    y = self.attention3_4(y)
-        x = self.resnet3_bottleneck4_relu(x + y)
+        y = x
+        x = self.bottleneck3_3(x) + y
 
-        #   Bottleneck5
-        y = self.resnet3_bottleneck5_pre(x)
-        #if self.use_attention:
-        #    y = self.attention3_5(y)
-        x = self.resnet3_bottleneck5_relu(x + y)
+        y = x
+        x = self.bottleneck3_4(x) + y
 
-        #   Bottleneck6
-        y = self.resnet3_bottleneck6_pre(x)
-        #if self.use_attention:
-        #    y = self.attention3_6(y)
-        x = self.resnet3_bottleneck6_relu(x + y)
+        y = x
+        x = self.bottleneck3_5(x) + y
 
-        # Resnet4
-        #   Bottleneck1
-        y = self.resnet4_bottleneck1_pre(x)
-        z = self.resnet4_bottleneck1_skip(x)
-        #if self.use_attention:
-        #    y = self.attention4_1(y)
-        x = self.resnet4_bottleneck1_relu(y + z)
+        y = x
+        x = self.bottleneck3_6(x) + y
 
-        #   Bottleneck2
-        y = self.resnet4_bottleneck2_pre(x)
-        #if self.use_attention:
-        #    y = self.attention4_2(y)
-        x = self.resnet4_bottleneck2_relu(x + y)
+        #
+        # ResNet4
+        #
+        y = self.bottleneck4_1(x)
+        x = self.resnet4_downsample(x)
+        x = y + x
 
-        #   Bottleneck3
-        y = self.resnet4_bottleneck3_pre(x)
-        #if self.use_attention:
-        #    y = self.attention4_3(y)
-        x = self.resnet4_bottleneck3_relu(x + y)
+        y = x
+        x = self.bottleneck4_2(x) + y
 
-        x = self.post_layers(x)
+        y = x
+        x = self.bottleneck4_3(x) + y
+
+        print("End of Resnet4: {}".format(x.shape))
+
+        # post process
+        x = self.avgpool(x)
         x = x.view(-1, 2048)
 
         return self.fc(x)
@@ -354,7 +365,7 @@ class AttentionResnet50Sub(nn.Module):
 
 
 if __name__ == '__main__':
-    model = AttentionResnet50Sub(num_classes=120, use_attention=True, pretrained=True)
+    model = AttentionResnet50(num_classes=120, use_attention=True, pretrained=True)
 
     image = np.random.rand(1, 3, 224, 224)
     tensor = torch.from_numpy(image).float()
