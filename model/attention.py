@@ -66,6 +66,7 @@ class AttentionResnet50(nn.Module):
             bottleneck1_1.conv3,
             bottleneck1_1.bn3)
         self.resnet1_downsample = bottleneck1_1.downsample
+        self.attention1_1 = Attention(256, 256//4)
         
         bottleneck1_2 = layer1[1]
         self.bottleneck1_2 = nn.Sequential(
@@ -77,6 +78,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck1_2.conv3,
             bottleneck1_2.bn3)
+        self.attention1_2 = Attention(256, 256//4)
 
         bottleneck1_3 = layer1[2]
         self.bottleneck1_3 = nn.Sequential(
@@ -88,6 +90,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck1_3.conv3,
             bottleneck1_3.bn3)
+        self.attention1_3 = Attention(256, 256//4)
 
         # Resnet2
         bottleneck2_1 = layer2[0]
@@ -101,6 +104,7 @@ class AttentionResnet50(nn.Module):
             bottleneck2_1.conv3,
             bottleneck2_1.bn3)
         self.resnet2_downsample = bottleneck2_1.downsample
+        self.attention2_1 = Attention(512, 512//4)
         
         bottleneck2_2 = layer2[1]
         self.bottleneck2_2 = nn.Sequential(
@@ -112,6 +116,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck2_2.conv3,
             bottleneck2_2.bn3)
+        self.attention2_2 = Attention(512, 512//4)
 
         bottleneck2_3 = layer2[2]
         self.bottleneck2_3 = nn.Sequential(
@@ -123,6 +128,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck2_3.conv3,
             bottleneck2_3.bn3)
+        self.attention2_3 = Attention(512, 512//4)
 
         bottleneck2_4 = layer2[3]
         self.bottleneck2_4 = nn.Sequential(
@@ -134,6 +140,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck2_4.conv3,
             bottleneck2_4.bn3)
+        self.attention2_4 = Attention(512, 512//4)
 
         # Resnet3
         bottleneck3_1 = layer3[0]
@@ -147,6 +154,7 @@ class AttentionResnet50(nn.Module):
             bottleneck3_1.conv3,
             bottleneck3_1.bn3)
         self.resnet3_downsample = bottleneck3_1.downsample
+        self.attention3_1 = Attention(1024, 1024//4)
         
         bottleneck3_2 = layer3[1]
         self.bottleneck3_2 = nn.Sequential(
@@ -158,6 +166,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck3_2.conv3,
             bottleneck3_2.bn3)
+        self.attention3_2 = Attention(1024, 1024//4)
 
         bottleneck3_3 = layer3[2]
         self.bottleneck3_3 = nn.Sequential(
@@ -169,6 +178,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck3_3.conv3,
             bottleneck3_3.bn3)
+        self.attention3_3 = Attention(1024, 1024//4)
 
         bottleneck3_4 = layer3[3]
         self.bottleneck3_4 = nn.Sequential(
@@ -180,6 +190,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck3_4.conv3,
             bottleneck3_4.bn3)
+        self.attention3_4 = Attention(1024, 1024//4)
 
         bottleneck3_5 = layer3[4]
         self.bottleneck3_5 = nn.Sequential(
@@ -191,6 +202,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck3_5.conv3,
             bottleneck3_5.bn3)
+        self.attention3_5 = Attention(1024, 1024//4)
 
         bottleneck3_6 = layer3[5]
         self.bottleneck3_6 = nn.Sequential(
@@ -202,6 +214,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck3_6.conv3,
             bottleneck3_6.bn3)
+        self.attention3_6 = Attention(1024, 1024//4)
 
         # Resnet4
         bottleneck4_1 = layer4[0]
@@ -215,6 +228,7 @@ class AttentionResnet50(nn.Module):
             bottleneck4_1.conv3,
             bottleneck4_1.bn3)
         self.resnet4_downsample = bottleneck4_1.downsample
+        self.attention4_1 = Attention(2048, 2048//4)
         
         bottleneck4_2 = layer4[1]
         self.bottleneck4_2 = nn.Sequential(
@@ -226,6 +240,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck4_2.conv3,
             bottleneck4_2.bn3)
+        self.attention4_2 = Attention(2048, 2048//4)
 
         bottleneck4_3 = layer4[2]
         self.bottleneck4_3 = nn.Sequential(
@@ -237,6 +252,7 @@ class AttentionResnet50(nn.Module):
             self.relu,
             bottleneck4_3.conv3,
             bottleneck4_3.bn3)
+        self.attention4_3 = Attention(2048, 2048//4)
 
         self.avgpool = base_model.avgpool
         self.fc = nn.Linear(2048, num_classes)
@@ -252,16 +268,22 @@ class AttentionResnet50(nn.Module):
         #
         # Resnet1
         #
-        y = self.resnet1_downsample(x)
-        x = self.bottleneck1_1(x)
+        y = self.bottleneck1_1(x)
+        x = self.resnet1_downsample(x)
+        if self.use_attention:
+            y = self.attention1_1(y)
         x = self.relu(x + y)
 
         identity = x
         y = self.bottleneck1_2(x)
+        if self.use_attention:
+            y = self.attention1_2(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck1_3(x)
+        if self.use_attention:
+            y = self.attention1_3(y)
         x = self.relu(y + identity)
 
         #
@@ -269,45 +291,65 @@ class AttentionResnet50(nn.Module):
         #
         y = self.bottleneck2_1(x)
         x = self.resnet2_downsample(x)
+        if self.use_attention:
+            y = self.attention2_1(y)
         x = self.relu(y + x)
 
         identity = x
         y = self.bottleneck2_2(x)
+        if self.use_attention:
+            y = self.attention2_2(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck2_3(x)
+        if self.use_attention:
+            y = self.attention2_3(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck2_4(x)
+        if self.use_attention:
+            y = self.attention2_4(y)
         x = self.relu(y + identity)
 
         #
         # ResNet3
         #
         y = self.bottleneck3_1(x)
+        if self.use_attention:
+            y = self.attention3_1(y)
         x = self.resnet3_downsample(x)
         x = self.relu(x + y)
 
         identity = x
         y = self.bottleneck3_2(x)
+        if self.use_attention:
+            y = self.attention3_2(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_3(x)
+        if self.use_attention:
+            y = self.attention3_3(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_4(x)
+        if self.use_attention:
+            y = self.attention3_4(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_5(x)
+        if self.use_attention:
+            y = self.attention3_5(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck3_6(x)
+        if self.use_attention:
+            y = self.attention3_6(y)        
         x = self.relu(y + identity)
 
         #
@@ -315,14 +357,20 @@ class AttentionResnet50(nn.Module):
         #
         y = self.bottleneck4_1(x)
         x = self.resnet4_downsample(x)
+        if self.use_attention:
+            y = self.attention4_1(y)
         x = self.relu(x + y)
 
         identity = x
         y = self.bottleneck4_2(x)
+        if self.use_attention:
+            y = self.attention4_2(y)
         x = self.relu(y + identity)
 
         identity = x
         y = self.bottleneck4_3(x)
+        if self.use_attention:
+            y = self.attention4_3(y)
         x = self.relu(y + identity)
 
         # post process
