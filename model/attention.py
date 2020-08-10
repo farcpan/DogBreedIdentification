@@ -214,8 +214,6 @@ class AttentionResnet50(nn.Module):
         # downsample
         x = self.prelayers(x)
 
-        print("End of prelayers: {}".format(x.shape))
-
         #
         # Resnet1
         #
@@ -228,8 +226,6 @@ class AttentionResnet50(nn.Module):
 
         y = x
         x = self.bottleneck1_3(x) + y
-
-        print("End of resnet1: {}".format(x.shape))
 
         #
         # ResNet2
@@ -281,8 +277,6 @@ class AttentionResnet50(nn.Module):
 
         y = x
         x = self.bottleneck4_3(x) + y
-
-        print("End of Resnet4: {}".format(x.shape))
 
         # post process
         x = self.avgpool(x)
